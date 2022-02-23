@@ -1,13 +1,13 @@
 import { useRef } from "react";
-
+import { useDispatch, useSelector } from "react-redux";
 import { Formik, ErrorMessage } from "formik";
-
+// import { addContact } from "../../redux";
+import { itemSlice } from "../../redux/itemSlice";
 import * as yup from "yup";
-
+import toast from "react-hot-toast";
 import { nanoid } from "nanoid";
 
 import "yup-phone";
-import PropTypes from "prop-types";
 
 import {
   FormText,
@@ -17,17 +17,30 @@ import {
   PhoneWrapper,
 } from "./Form.styled";
 
+const { add } = itemSlice.actions;
+
 const schema = yup.object().shape({
   name: yup.string().required().min(2).max(20),
   number: yup.string().phone().required(),
 });
 
-const ContactForm = ({ onSubmit }) => {
+const ContactForm = () => {
+  const contacts = useSelector((state) => state.items);
+  const dispatch = useDispatch();
   const loginInputId = useRef(nanoid());
   const telInputId = useRef(nanoid());
 
   const handleSubmit = (values, { resetForm }) => {
-    onSubmit(values);
+    const { name, number } = values;
+    const isDuplicated = contacts.find(
+      (contacts) => contacts.name.toLowerCase() === name.toLowerCase()
+    );
+    if (isDuplicated) {
+      toast.error(`${name} is already in contacts`);
+      return;
+    }
+    dispatch(add({ name, number, id: nanoid() }));
+    // dispatch(addContact({ name, number, id: nanoid() }));
     resetForm();
   };
   const formError = (message) => <FormText>{message}</FormText>;
@@ -57,10 +70,6 @@ const ContactForm = ({ onSubmit }) => {
       </FormStyled>
     </Formik>
   );
-};
-
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
 };
 
 export default ContactForm;
