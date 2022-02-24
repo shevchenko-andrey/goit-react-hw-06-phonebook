@@ -1,12 +1,11 @@
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, ErrorMessage } from "formik";
-// import { addContact } from "../../redux";
-import { itemSlice } from "../../redux/itemSlice";
+import { itemSlice } from "../../redux/contactsSlice";
 import * as yup from "yup";
 import toast from "react-hot-toast";
 import { nanoid } from "nanoid";
-
+import { getContacts } from "../../redux/selectors";
 import "yup-phone";
 
 import {
@@ -25,22 +24,23 @@ const schema = yup.object().shape({
 });
 
 const ContactForm = () => {
-  const contacts = useSelector((state) => state.items);
+  const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
   const loginInputId = useRef(nanoid());
   const telInputId = useRef(nanoid());
 
   const handleSubmit = (values, { resetForm }) => {
     const { name, number } = values;
+
     const isDuplicated = contacts.find(
       (contacts) => contacts.name.toLowerCase() === name.toLowerCase()
     );
+
     if (isDuplicated) {
       toast.error(`${name} is already in contacts`);
       return;
     }
     dispatch(add({ name, number, id: nanoid() }));
-    // dispatch(addContact({ name, number, id: nanoid() }));
     resetForm();
   };
   const formError = (message) => <FormText>{message}</FormText>;

@@ -4,7 +4,7 @@ import { persistReducer } from "redux-persist";
 
 import storage from "redux-persist/lib/storage";
 
-import { itemSlice } from "./itemSlice";
+import { itemSlice } from "./contactsSlice";
 
 import { filterSlice } from "./filterSlice";
 

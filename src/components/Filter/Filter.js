@@ -1,15 +1,22 @@
 import PropTypes from "prop-types";
 
 import { FilterDescription, FilterContact, Input } from "./Filter.styled";
-// import { filterSlice } from "../../redux";
 
-// export const { update } = filterSlice.actions;
+import { useDispatch, useSelector } from "react-redux";
 
-function Filter({ value, onChange }) {
+import { filterSlice } from "../../redux/filterSlice";
+
+export const { update } = filterSlice.actions;
+
+function Filter() {
+  const dispatch = useDispatch();
+  const filter = useSelector(({ filter }) => filter);
+  const onChange = ({ target: { value } }) =>
+    dispatch(update(value.toLowerCase()));
   return (
     <FilterContact>
       <FilterDescription>Find contact by name</FilterDescription>
-      <Input value={value} onChange={onChange} />
+      <Input value={filter} onChange={onChange} />
     </FilterContact>
   );
 }
