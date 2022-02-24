@@ -1,21 +1,27 @@
+import { configureStore } from "@reduxjs/toolkit";
+
 import {
-  configureStore,
-  combineReducers,
-  // getDefaultMiddleware,
-} from "@reduxjs/toolkit";
-import { itemSlice } from "../redux/itemSlice";
-import { filterSlice } from "../redux/filterSlice";
-// import { filterSlice, itemSlice, persistContactReducer } from "../redux";
-export const rootReducer = combineReducers({
-  items: itemSlice.reducer,
-  filter: filterSlice.reducer,
-});
+  persistStore,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
+
+import { persistedReducer } from "./redusers";
+
+// import { rootReducer } from "./redusers";
+
 export const store = configureStore({
-  reducer: rootReducer,
+  reducer: persistedReducer,
+
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
-// phonebook: persistContactReducer,
-// middleware: getDefaultMiddleware({
-//   serializableCheck: {
-//     ignoredActions: ["persist/PERSIST"],
-//   },
-// }),
+export const persistor = persistStore(store);
